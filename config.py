@@ -14,3 +14,7 @@ PDF_PATH = os.getenv("PDF_PATH", "data/sample.pdf")
 
 # Gemini configuration
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+# Text chunking configuration (FR-03)
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "1000"))
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "200"))
