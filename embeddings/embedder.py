@@ -18,7 +18,7 @@ class Embedder:
 
         self.model = SentenceTransformer(EMBEDDING_MODEL)
 
-        self.embedding_dimension = self.model.get_sentence_embedding_dimension()
+        self.embedding_dimension = self.model.get_embedding_dimension()
 
         if self.embedding_dimension is None:
             raise RuntimeError(
