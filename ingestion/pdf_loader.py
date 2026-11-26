@@ -2,11 +2,6 @@
 from pathlib import Path
 import pymupdf as fitz  # PyMuPDF
 
-
-
-import fitz
-
-
 def extract_pdf_text(pdf_path):
     """
     Extract text from a PDF page by page.
