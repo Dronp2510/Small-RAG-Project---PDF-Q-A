@@ -14,6 +14,7 @@ PDF_PATH = os.getenv("PDF_PATH", "data/sample.pdf")
 
 # Gemini configuration
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 
 # Text chunking configuration (FR-03)
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "1000"))

@@ -4,6 +4,7 @@ from ingestion.chunker import chunk_pages
 
 from embeddings.embedder import Embedder
 from retrieval.vector_store import VectorStore
+from generation.llm_client import GeminiClient
 
 from config import (
     PDF_PATH,
@@ -73,7 +74,17 @@ def main():
     print("\nDocument indexing completed!")
     print(f"Total vectors indexed: {vector_store.get_index_size()}")
 
-    # STEP 6: Accept a question and retrieve relevant chunks
+    # STEP 6: Initialize Gemini for answer generation
+    print("\nStep 6: Initializing Gemini...")
+    try:
+        gemini = GeminiClient()
+    except Exception as error:
+        print(f"Gemini initialization failed: {error}")
+        return
+
+    print("Gemini initialized successfully!")
+
+    # STEP 7: Accept a question and retrieve relevant chunks
     print("\n" + "=" * 60)
     print("PDF QUESTION RETRIEVAL")
     print("=" * 60)
@@ -104,18 +115,31 @@ def main():
             print("No relevant chunks were found.")
             continue
 
-        # Display retrieved chunks and their metadata
-        print("\nTop Retrieved Chunks")
+        # Generate an answer using only the retrieved PDF context
+        print("\nGenerating an answer from the PDF context...")
+        try:
+            answer = gemini.generate_answer(
+                question=question,
+                retrieved_chunks=retrieved_chunks,
+            )
+        except Exception as error:
+            print(f"\nAnswer generation failed: {error}")
+            print("Check Gemini API access and try again.")
+            continue
+
+        # Collect unique source pages in retrieval order
+        source_pages = []
+        for result in retrieved_chunks:
+            page_number = result.get("page_number")
+            if page_number is not None and page_number not in source_pages:
+                source_pages.append(page_number)
+
+        print("\nAnswer")
         print("=" * 60)
+        print(answer)
 
-        for rank, result in enumerate(retrieved_chunks, start=1):
-            print(f"\nRANK: {rank}")
-            print(f"CHUNK ID: {result['chunk_id']}")
-            print(f"SOURCE PAGE: {result['page_number']}")
-            print(f"SIMILARITY SCORE: {result['similarity_score']:.4f}")
-            print("-" * 60)
-
-            print(result["text"])
+        if source_pages:
+            print("\nSource pages: " + ", ".join(map(str, source_pages)))
 
         print("\n" + "=" * 60)
 
